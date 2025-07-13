@@ -1,7 +1,15 @@
 // L'Oréal Paris Professional JavaScript
 
+// Chatbot Variables
+let chatbotOpen = false;
+let isTyping = false;
+let messageCount = 0;
+
 // Professional scroll animations
 document.addEventListener('DOMContentLoaded', function() {
+    // Initialize chatbot
+    initializeChatbot();
+    
     const observerOptions = {
         threshold: 0.1,
         rootMargin: '0px 0px -50px 0px'
@@ -289,11 +297,11 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function initializeChatbot() {
-    const chatbotToggle = document.getElementById('chatbot-toggle');
-    const chatbotWindow = document.getElementById('chatbot-window');
-    const chatbotClose = document.getElementById('chatbot-close');
-    const chatbotInput = document.getElementById('chatbot-input');
-    const chatbotSend = document.getElementById('chatbot-send');
+    const chatbotToggle = document.getElementById('loreal-chatbot-toggle');
+    const chatbotWindow = document.getElementById('loreal-chatbot-window');
+    const chatbotClose = document.getElementById('loreal-chatbot-close');
+    const chatbotInput = document.getElementById('loreal-chatbot-input');
+    const chatbotSend = document.getElementById('loreal-chatbot-send');
     
     // Toggle chatbot
     chatbotToggle.addEventListener('click', toggleChatbot);
@@ -316,18 +324,24 @@ function initializeChatbot() {
 }
 
 function toggleChatbot() {
-    const chatbotContainer = document.getElementById('chatbot-container');
-    const chatbotWindow = document.getElementById('chatbot-window');
-    const chatbotToggle = document.getElementById('chatbot-toggle');
+    const chatbotWidget = document.getElementById('loreal-chatbot-widget');
+    const chatbotWindow = document.getElementById('loreal-chatbot-window');
+    const chatbotToggle = document.getElementById('loreal-chatbot-toggle');
     
     if (!chatbotOpen) {
-        chatbotContainer.classList.add('chatbot-expanded');
+        chatbotWidget.classList.add('chatbot-expanded');
         chatbotWindow.style.display = 'flex';
         chatbotToggle.style.transform = 'scale(0.8)';
         
+        // Add welcome message if no messages exist
+        const messagesContainer = document.getElementById('loreal-chatbot-messages');
+        if (messagesContainer.children.length === 0) {
+            addChatMessage('assistant', 'Hello! Welcome to L\'Oréal Paris! 💄✨ I\'m your personal beauty consultant. How can I help you achieve your beauty goals today?');
+        }
+        
         // Animate messages in
         setTimeout(() => {
-            const messages = document.querySelectorAll('.chatbot-messages .message');
+            const messages = document.querySelectorAll('.loreal-chatbot-messages .message');
             messages.forEach((message, index) => {
                 setTimeout(() => {
                     message.style.opacity = '1';
@@ -337,23 +351,23 @@ function toggleChatbot() {
         }, 300);
         
         chatbotOpen = true;
-        document.getElementById('chatbot-input').focus();
+        document.getElementById('loreal-chatbot-input').focus();
     }
 }
 
 function closeChatbot() {
-    const chatbotContainer = document.getElementById('chatbot-container');
-    const chatbotWindow = document.getElementById('chatbot-window');
-    const chatbotToggle = document.getElementById('chatbot-toggle');
+    const chatbotWidget = document.getElementById('loreal-chatbot-widget');
+    const chatbotWindow = document.getElementById('loreal-chatbot-window');
+    const chatbotToggle = document.getElementById('loreal-chatbot-toggle');
     
-    chatbotContainer.classList.remove('chatbot-expanded');
+    chatbotWidget.classList.remove('chatbot-expanded');
     chatbotWindow.style.display = 'none';
     chatbotToggle.style.transform = 'scale(1)';
     chatbotOpen = false;
 }
 
 async function sendMessage() {
-    const input = document.getElementById('chatbot-input');
+    const input = document.getElementById('loreal-chatbot-input');
     const message = input.value.trim();
     
     if (!message || isTyping) return;
@@ -367,7 +381,6 @@ async function sendMessage() {
     addChatMessage('user', message);
     input.value = '';
     messageCount++;
-    updateMessageCount();
     
     // Check if API key is configured
     if (!window.SECRETS || !window.SECRETS.OPENAI_API_KEY || window.SECRETS.OPENAI_API_KEY === 'your-openai-api-key-here') {
@@ -390,20 +403,7 @@ async function sendMessage() {
                 messages: [
                     {
                         role: 'system',
-                        content: `You are a professional L'Oréal Paris beauty consultant chatbot. You ONLY discuss beauty, skincare, makeup, and L'Oréal products. You're enthusiastic, knowledgeable, and supportive.
-
-                        STRICT GUIDELINES:
-                        - ONLY answer questions about beauty, skincare, makeup, hair care, and L'Oréal products
-                        - If asked about anything else (politics, weather, general topics, other brands), politely redirect to beauty topics
-                        - Focus primarily on L'Oréal Paris products when making recommendations
-                        - Use emojis sparingly but effectively
-                        - Keep responses concise but informative (max 150 words)
-                        - Be personal and conversational about beauty topics only
-                        - Include specific L'Oréal product names when possible
-                        - Ask follow-up questions about their beauty needs and preferences
-                        - Always maintain L'Oréal's brand voice: sophisticated, empowering, inclusive
-                        
-                        REDIRECT TEMPLATE: "I'm here to help with all things beauty! Let's talk about skincare, makeup, or finding the perfect L'Oréal products for you. What beauty goal can I help you achieve today? ✨"`
+                        content: 'You are a professional L\'Oréal Paris beauty consultant chatbot. You ONLY discuss beauty, skincare, makeup, and L\'Oréal products. You\'re enthusiastic, knowledgeable, and supportive. ONLY answer questions about beauty, skincare, makeup, hair care, and L\'Oréal products. If asked about anything else, politely redirect to beauty topics. Focus primarily on L\'Oréal Paris products when making recommendations. Use emojis sparingly but effectively. Keep responses concise but informative (max 150 words). Be personal and conversational about beauty topics only. Include specific L\'Oréal product names when possible. Ask follow-up questions about their beauty needs and preferences. Always maintain L\'Oréal\'s brand voice: sophisticated, empowering, inclusive.'
                     },
                     {
                         role: 'user',
@@ -431,18 +431,18 @@ async function sendMessage() {
 }
 
 function sendQuickMessage(message) {
-    document.getElementById('chatbot-input').value = message;
+    document.getElementById('loreal-chatbot-input').value = message;
     sendMessage();
 }
 
 function addChatMessage(sender, message) {
-    const messagesContainer = document.getElementById('chatbot-messages');
+    const messagesContainer = document.getElementById('loreal-chatbot-messages');
     const messageDiv = document.createElement('div');
     messageDiv.className = `message ${sender}-message`;
     messageDiv.style.opacity = '0';
     messageDiv.style.transform = 'translateY(20px)';
     
-    const avatar = sender === 'assistant' ? '<i class="fas fa-robot"></i>' : '<i class="fas fa-user"></i>';
+    const avatar = sender === 'assistant' ? '<i class="fas fa-gem"></i>' : '<i class="fas fa-user"></i>';
     
     messageDiv.innerHTML = `
         <div class="message-avatar">
@@ -494,7 +494,7 @@ function showTypingIndicator() {
 
 function showFriendlyLoadingMessage() {
     isTyping = true;
-    const messagesContainer = document.getElementById('chatbot-messages');
+    const messagesContainer = document.getElementById('loreal-chatbot-messages');
     const loadingDiv = document.createElement('div');
     loadingDiv.className = 'message assistant-message friendly-loading';
     loadingDiv.id = 'friendly-loading';
@@ -511,7 +511,7 @@ function showFriendlyLoadingMessage() {
     
     loadingDiv.innerHTML = `
         <div class="message-avatar">
-            <i class="fas fa-robot"></i>
+            <i class="fas fa-gem"></i>
         </div>
         <div class="message-content">
             <p class="loading-text">${randomMessage}</p>
@@ -558,7 +558,7 @@ function updateChatbotStatus() {
 }
 
 function animatePlaceholder() {
-    const input = document.getElementById('chatbot-input');
+    const input = document.getElementById('loreal-chatbot-input');
     const placeholders = [
         'Ask me anything about beauty...',
         'What\'s your skin type?',
@@ -644,7 +644,6 @@ function initializeNavigation() {
 // === L'ORÉAL CHATBOT - COMPLETE IMPLEMENTATION ===
 // Chatbot state - moved outside DOMContentLoaded to persist across session
 let isOpen = false;
-let isTyping = false;
 let conversation = [];
 
 // System prompt for L'Oréal chatbot
