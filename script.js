@@ -438,19 +438,18 @@ function sendQuickMessage(message) {
 function addChatMessage(sender, message) {
     const messagesContainer = document.getElementById('loreal-chatbot-messages');
     const messageDiv = document.createElement('div');
-    messageDiv.className = `message ${sender}-message`;
+    messageDiv.className = `loreal-chatbot-message ${sender}`;
     messageDiv.style.opacity = '0';
     messageDiv.style.transform = 'translateY(20px)';
     
     const avatar = sender === 'assistant' ? '<i class="fas fa-gem"></i>' : '<i class="fas fa-user"></i>';
     
     messageDiv.innerHTML = `
-        <div class="message-avatar">
+        <div class="loreal-chatbot-avatar">
             ${avatar}
         </div>
-        <div class="message-content">
-            <p>${message}</p>
-            <span class="message-time">${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+        <div class="loreal-chatbot-bubble">
+            <p style="margin: 0;">${message}</p>
         </div>
     `;
     
@@ -496,7 +495,7 @@ function showFriendlyLoadingMessage() {
     isTyping = true;
     const messagesContainer = document.getElementById('loreal-chatbot-messages');
     const loadingDiv = document.createElement('div');
-    loadingDiv.className = 'message assistant-message friendly-loading';
+    loadingDiv.className = 'loreal-chatbot-message assistant friendly-loading';
     loadingDiv.id = 'friendly-loading';
     
     const friendlyMessages = [
@@ -510,11 +509,11 @@ function showFriendlyLoadingMessage() {
     const randomMessage = friendlyMessages[Math.floor(Math.random() * friendlyMessages.length)];
     
     loadingDiv.innerHTML = `
-        <div class="message-avatar">
+        <div class="loreal-chatbot-avatar">
             <i class="fas fa-gem"></i>
         </div>
-        <div class="message-content">
-            <p class="loading-text">${randomMessage}</p>
+        <div class="loreal-chatbot-bubble">
+            <p style="margin: 0; margin-bottom: 8px;">${randomMessage}</p>
             <div class="typing-dots">
                 <span></span>
                 <span></span>
